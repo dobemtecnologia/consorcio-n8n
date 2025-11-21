@@ -11,12 +11,11 @@
 # IMPORTANTE: Ajuste o CPF e senha antes de usar!
 
 curl -X POST "https://clickvenda.app/Acesso/Entrar" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "X-Requested-With: XMLHttpRequest" \
   -H "Accept: */*" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/acesso/Entrar" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -d "cpf=00640045200" \
-  -d "senha=disal 2026"
+  -F "cpf=00640045200" \
+  -F "senha=disal 2026"
 
