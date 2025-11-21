@@ -1,6 +1,51 @@
-# Passo-a-Passo no N8n - Autenticação ClickVenda
+# Passo-a-Passo Completo no N8n - ClickVenda
 
-## ✅ Sequência Completa que Funciona
+## 📋 Índice das Requisições
+
+Esta documentação contém **todas as 30 requisições** do fluxo completo, na ordem exata que o navegador executa.
+
+### Setup Inicial (Nós Fixos)
+
+1. **Login** - HTTP Request
+2. **Extrair Session ID** - Code
+3. **Inicializar Sessão** - HTTP Request (OBRIGATÓRIO!)
+
+### Requisições do Fluxo (Ordem Exata)
+
+1. **POST Acesso/Entrar** - Login inicial
+2. **POST Acesso/Entrar** - Login (segunda tentativa)
+3. **GET Venda/Venda** - Buscar dados de venda
+4. **GET Venda/BuscaAndamento** - Buscar andamento
+5. **GET Venda/BuscarModelos** - Buscar modelos
+6. **POST Venda/BuscaPrazo** - Buscar prazo
+7. **POST Venda/BuscaPlano** - Buscar plano
+8. **POST Venda/BuscaMarca** - Buscar marca
+9. **POST Venda/BuscaBem** - Buscar bem
+10. **POST Venda/BuscaAndamento** - Buscar andamento (POST)
+11. **GET Venda/SelecaoGrupo** - Seleção de grupo (GET)
+12. **POST Venda/SelecaoGrupo** - Seleção de grupo (POST)
+13. **GET Venda/SelecaoCota** - Seleção de cota (GET)
+14. **POST Venda/SelecaoCota** - Seleção de cota (POST)
+15. **GET Venda/DadosBemSelecionadoAndamento** - Dados do bem selecionado (GET)
+16. **POST Venda/DadosBemSelecionadoAndamento** - Dados do bem selecionado (POST)
+17. **GET Venda/DadosCliente** - Dados do cliente (GET)
+18. **GET Venda/BuscarCPF** - Buscar CPF
+19. **GET ApiVD/cidade/PA** - Buscar cidades (PA)
+20. **POST Venda/DadosClientePF** - Dados do cliente PF (POST)
+21. **GET Venda/EnderecoCliente** - Endereço do cliente (GET)
+22. **GET Venda/BuscarCEP** - Buscar CEP (1)
+23. **GET Venda/BuscarCEP** - Buscar CEP (2)
+24. **GET ApiVD/cidade/PA** - Buscar cidades (PA) (2)
+25. **GET ApiVD/cidade/PA** - Buscar cidades (PA) (3)
+26. **POST Venda/EnderecoCliente** - Endereço do cliente (POST 1)
+27. **POST Venda/EnderecoCliente** - Endereço do cliente (POST 2)
+28. **GET Venda/DadosBancarios** - Dados bancários (GET)
+29. **POST Venda/DadosBancarios** - Dados bancários (POST)
+30. **GET Venda/DadosPagamento** - Dados de pagamento
+
+---
+
+## 🔧 Setup Inicial (Execute APENAS UMA VEZ)
 
 ### **Nó 1: HTTP Request - Login**
 
@@ -11,14 +56,23 @@
 
 ```bash
 curl -X POST "https://clickvenda.app/Acesso/Entrar" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
-  -H "X-Requested-With: XMLHttpRequest" \
   -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/acesso/Entrar" \
-  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
   -d "cpf=00640045200" \
-  -d "senha=disal 2026"
+  -d "senha=disal+2026"
 ```
 
 5. **Ajuste os valores de CPF e senha** no Body:
@@ -38,24 +92,23 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
 
 1. Adicione um nó **Code** após o nó de Login
 2. Configure o modo como **"Run Once for All Items"**
-3. Cole este código JavaScript:
+3. Cole este código JavaScript (arquivo: `extrair-session-id.js`):
 
 ```javascript
-// Extrai o Session ID do cookie retornado
-const item = $input.first();
-const httpResponse = item.json;
+// Code node: Mode = "Run Once for All Items"
+// Extrai o Session ID do cookie retornado pelo login
 
-// Acessa os headers da resposta
-let headers = {};
-if (httpResponse.headers) {
-  headers = httpResponse.headers;
-}
+const item = $input.first();                  // pega o item do HTTP Request
 
-// Procura pelo cookie em diferentes formatos
+// Acessa os headers - o N8n pode retornar em diferentes estruturas
+const headers = (item?.json?.headers) || {};
+
+// Procura pelo cookie em diferentes formatos (case-insensitive)
 const raw = headers['set-cookie'] || headers['Set-Cookie'] || headers['SET-COOKIE'] || [];
 
 // Converte para array se necessário
 const list = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+
 
 let sessionId = null;
 
@@ -73,36 +126,36 @@ for (const line of list) {
   const value = first.slice(idx + 1).trim();
   
   if (!name) continue;
-  
+
   // Verifica se é o Session ID (case-insensitive)
   if (name.toLowerCase() === 'asp.net_sessionid') {
     sessionId = value;
-    break;
   }
 }
+
 
 // Retorne SEMPRE um array de objetos (requisito do N8n)
 return [
   {
     json: {
-      sessionId: sessionId,
-      loginSuccess: !!sessionId,
+      sessionId,            // ex: "212yl23pw4gpmehgq1ru4nig"
     },
   },
 ];
+
 ```
 
 4. Renomeie o nó para: **"Extrair Session ID"**
 
 ---
 
-### **Nó 3: HTTP Request - Inicializar Sessão (IMPORTANTE!)**
+### **Nó 3: HTTP Request - Inicializar Sessão (⚠️ OBRIGATÓRIO!)**
 
 **Este passo é essencial! Sem ele, as requisições subsequentes não funcionam.**
 
 1. Adicione outro nó **HTTP Request** após o nó "Extrair Session ID"
 2. Clique em **Options** (⚙️) > **Import from cURL**
-3. Cole este comando:
+3. **IMPORTANTE**: Você precisa acessar a página HTML primeiro. Use este CURL:
 
 ```bash
 curl -X GET "https://clickvenda.app/Venda/EscolherDN/?idLead=&idEquipe=42&idPedidoOrigem=&TipoVenda=Automovel" \
@@ -122,42 +175,1118 @@ curl -X GET "https://clickvenda.app/Venda/EscolherDN/?idLead=&idEquipe=42&idPedi
 
 ---
 
-### **Nó 4: HTTP Request - Requisição de Venda**
+## 📦 Todas as Requisições do Fluxo
 
-1. Adicione outro nó **HTTP Request** após o nó "Inicializar Sessão"
+Agora você pode adicionar as requisições abaixo na ordem exata. **IMPORTANTE**: Todas as requisições autenticadas precisam do Cookie com o Session ID.
+
+### **Requisição 2: POST Acesso/Entrar**
+
+**Descrição**: Login (segunda tentativa)
+
+1. Adicione um nó **HTTP Request**
 2. Clique em **Options** (⚙️) > **Import from cURL**
 3. Cole este comando:
 
 ```bash
-curl -X GET "https://clickvenda.app/Venda/Venda?_=1763745416458" \
+curl -X POST "https://clickvenda.app/Acesso/Entrar" \
   -H "Accept: */*" \
-  -H "X-Requested-With: XMLHttpRequest" \
-  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Acesso/Entrar" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "cpf=00640045200" \
+  -d "senha=disal+2026"
 ```
 
-4. **Ajuste o Cookie**:
+4. **Ajuste o Cookie** (se necessário):
    - Vá em **Parameters** (Headers)
    - Encontre o campo **"Cookie"**
-   - No valor, use: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
-
-5. **Ajuste o parâmetro `_` (timestamp)**:
-   - Vá em **Query String** ou na URL
-   - O parâmetro `_=1763745416458` pode ser substituído por `_={{ Date.now() }}` para gerar timestamp atual
-
-6. Renomeie o nó para: **"Requisição Venda"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
 
 ---
 
-## 📋 Resumo da Sequência
+### **Requisição 3: GET Venda/Venda**
 
+**Descrição**: Buscar dados de venda
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/Venda?_=1763750921747" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
 ```
-[Login] → [Extrair Session ID] → [Inicializar Sessão] → [Requisição Venda]
-   ↓              ↓                       ↓                      ↓
-Retorna      Extrai o          Inicializa a          Funciona!
-Session ID   Session ID        sessão (essencial!)
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 4: GET Venda/BuscaAndamento**
+
+**Descrição**: Buscar andamento
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/BuscaAndamento?_=1763750921748" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
 ```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 5: GET Venda/BuscarModelos**
+
+**Descrição**: Buscar modelos
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/BuscarModelos?idMarca=null&minCredito=null&maxCredito=null&tipo=andamento&_=1763750921749" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 6: POST Venda/BuscaPrazo**
+
+**Descrição**: Buscar prazo
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/BuscaPrazo" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "tipoFiltro=parcela" \
+  -d "idProduto=2"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 7: POST Venda/BuscaPlano**
+
+**Descrição**: Buscar plano
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/BuscaPlano" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "prazo=" \
+  -d "parcelaAte=5000" \
+  -d "idProduto=2"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 8: POST Venda/BuscaMarca**
+
+**Descrição**: Buscar marca
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/BuscaMarca" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "prazo=" \
+  -d "planoId=3233"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 9: POST Venda/BuscaBem**
+
+**Descrição**: Buscar bem
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/BuscaBem" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "prazo=" \
+  -d "planoId=3233" \
+  -d "marca=" \
+  -d "creditoReferenciado=true" \
+  -d "idProduto=2"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 10: POST Venda/BuscaAndamento**
+
+**Descrição**: Buscar andamento (POST)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/BuscaAndamento" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "tipoFiltro=parcela" \
+  -d "prazo=" \
+  -d "plano=3233" \
+  -d "idMarca=" \
+  -d "idBem=1000763" \
+  -d "creditoReferenciado=true" \
+  -d "minParcela=" \
+  -d "maxParcela=5000"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 11: GET Venda/SelecaoGrupo**
+
+**Descrição**: Seleção de grupo (GET)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/SelecaoGrupo?idProduto=2&_=1763750921750" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 12: POST Venda/SelecaoGrupo**
+
+**Descrição**: Seleção de grupo (POST)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/SelecaoGrupo" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "idGrupo=10196" \
+  -d "idPlano=3233" \
+  -d "prazoCota=056" \
+  -d "idTaxaPlano=9650" \
+  -d "qtdApagarContemplacao=0" \
+  -d "idProduto=2"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 13: GET Venda/SelecaoCota**
+
+**Descrição**: Seleção de cota (GET)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/SelecaoCota?idProduto=2&_=1763750921751" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 14: POST Venda/SelecaoCota**
+
+**Descrição**: Seleção de cota (POST)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/SelecaoCota" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "cota=1421" \
+  -d "idProduto=2"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 15: GET Venda/DadosBemSelecionadoAndamento**
+
+**Descrição**: Dados do bem selecionado (GET)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/DadosBemSelecionadoAndamento?_=1763750921752" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 16: POST Venda/DadosBemSelecionadoAndamento**
+
+**Descrição**: Dados do bem selecionado (POST)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/DadosBemSelecionadoAndamento" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "continuar=true"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 17: GET Venda/DadosCliente**
+
+**Descrição**: Dados do cliente (GET)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/DadosCliente?_=1763750921753" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 18: GET Venda/BuscarCPF**
+
+**Descrição**: Buscar CPF
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/BuscarCPF?cpf=832.054.622-20&_=1763750921754" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 19: GET ApiVD/cidade/PA**
+
+**Descrição**: Buscar cidades (PA)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/ApiVD/cidade/PA?_=1763750921755" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 20: POST Venda/DadosClientePF**
+
+**Descrição**: Dados do cliente PF (POST)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/DadosClientePF" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "cpf=832.054.622-20" \
+  -d "nomeCompleto=ELTON+JHON+DIAS+GONCALVES" \
+  -d "nomeCompletoWS=ELTON+JHON+DIAS+GONCALVES" \
+  -d "dataNascimento=19%2F02%2F1986" \
+  -d "ufNaturalidade=PA" \
+  -d "naturalidade=BELEM" \
+  -d "idCidadeNaturalidade=4565" \
+  -d "idNacionalidade=BR" \
+  -d "rg=4978939" \
+  -d "orgaoExpedidor=SSP" \
+  -d "ufOrgaoExpedidor=PA" \
+  -d "dataExpedicao=08%2F08%2F2016" \
+  -d "sexo=M" \
+  -d "idEstadoCivil=6" \
+  -d "valorRendaMensal=30000" \
+  -d "idProfissao=5364" \
+  -d "nomeMae=creuza+dias+gon%C3%A7alves" \
+  -d "nomePai=eder+wilsom+machado+gon%C3%A7alves" \
+  -d "pessoaExpostaPoliticamente=false" \
+  -d "compartilhaDados=true" \
+  -d "indicadoPorCPF=" \
+  -d "indicadoPorNome=" \
+  -d "sexoConjuge=" \
+  -d "cpfConjuge=" \
+  -d "nomeConjuge=" \
+  -d "rgConjuge="
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 21: GET Venda/EnderecoCliente**
+
+**Descrição**: Endereço do cliente (GET)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/EnderecoCliente?idProduto=2&_=1763750921756" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 22: GET Venda/BuscarCEP**
+
+**Descrição**: Buscar CEP (1)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/BuscarCEP?cep=66093-047&_=1763750921757" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 23: GET Venda/BuscarCEP**
+
+**Descrição**: Buscar CEP (2)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/BuscarCEP?cep=66093-047&_=1763750921758" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 24: GET ApiVD/cidade/PA**
+
+**Descrição**: Buscar cidades (PA) (2)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/ApiVD/cidade/PA?_=1763750921759" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 25: GET ApiVD/cidade/PA**
+
+**Descrição**: Buscar cidades (PA) (3)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/ApiVD/cidade/PA?_=1763750921760" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 26: POST Venda/EnderecoCliente**
+
+**Descrição**: Endereço do cliente (POST 1)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "cep=66093-047" \
+  -d "logradouro=TRAVESSA+HUMAIT%C3%81" \
+  -d "numero=2240" \
+  -d "complemento=Apt+1804A" \
+  -d "bairro=MARCO" \
+  -d "cidade=BELEM" \
+  -d "uf=PA" \
+  -d "telResidencial=(91)983538941" \
+  -d "idCidadeResidencial=4565" \
+  -d "cepComercial=66093-047" \
+  -d "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
+  -d "numeroComercial=2240" \
+  -d "complementoComercial=Apt+1804A" \
+  -d "bairroComercial=MARCO" \
+  -d "cidadeComercial=BELEM" \
+  -d "ufComercial=PA" \
+  -d "telComercial=(91)983538941" \
+  -d "idCidadeComercial=4565" \
+  -d "usarCorrespondencia=R" \
+  -d "email=elton.jd.goncalves%40gmail.com" \
+  -d "email2=elton.jd.goncalves%40gmail.com" \
+  -d "aceitaSMS=true" \
+  -d "ufCelular=PA" \
+  -d "idCidadeCelular=4565" \
+  -d "cidadeCelular=BELEM" \
+  -d "celular=(91)983538941" \
+  -d "celular2=(91)983538941" \
+  -d "ufTelAdicional=PA" \
+  -d "idCidadeTelAdicional=4565" \
+  -d "cidadeTelAdicional=BELEM" \
+  -d "telAdicional=(91)983538941" \
+  -d "aderiuSeguroVidaPrestamista=true" \
+  -d "aceitaDivulgarDados=true" \
+  -d "aceitaRepresentanteGrupo=true"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 27: POST Venda/EnderecoCliente**
+
+**Descrição**: Endereço do cliente (POST 2)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "cep=66093-047" \
+  -d "logradouro=TRAVESSA+HUMAIT%C3%81" \
+  -d "numero=2240" \
+  -d "complemento=Apt+1804A" \
+  -d "bairro=MARCO" \
+  -d "cidade=BELEM" \
+  -d "uf=PA" \
+  -d "telResidencial=" \
+  -d "idCidadeResidencial=4565" \
+  -d "cepComercial=66093-047" \
+  -d "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
+  -d "numeroComercial=2240" \
+  -d "complementoComercial=Apt+1804A" \
+  -d "bairroComercial=MARCO" \
+  -d "cidadeComercial=BELEM" \
+  -d "ufComercial=PA" \
+  -d "telComercial=" \
+  -d "idCidadeComercial=4565" \
+  -d "usarCorrespondencia=R" \
+  -d "email=elton.jd.goncalves%40gmail.com" \
+  -d "email2=elton.jd.goncalves%40gmail.com" \
+  -d "aceitaSMS=true" \
+  -d "ufCelular=PA" \
+  -d "idCidadeCelular=4565" \
+  -d "cidadeCelular=BELEM" \
+  -d "celular=(91)983538941" \
+  -d "celular2=(91)983538941" \
+  -d "ufTelAdicional=PA" \
+  -d "idCidadeTelAdicional=4565" \
+  -d "cidadeTelAdicional=BELEM" \
+  -d "telAdicional=(91)983538941" \
+  -d "aderiuSeguroVidaPrestamista=true" \
+  -d "aceitaDivulgarDados=true" \
+  -d "aceitaRepresentanteGrupo=true"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 28: GET Venda/DadosBancarios**
+
+**Descrição**: Dados bancários (GET)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/DadosBancarios?_=1763750921761" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
+
+---
+
+### **Requisição 29: POST Venda/DadosBancarios**
+
+**Descrição**: Dados bancários (POST)
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X POST "https://clickvenda.app/Venda/DadosBancarios" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+  -H "Origin: https://clickvenda.app" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
+  -d "autorizaDeposito=false" \
+  -d "naoTenhoConta=true" \
+  -d "idBancoDeposito=" \
+  -d "agenciaDeposito=" \
+  -d "contaCorrenteDeposito="
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+---
+
+### **Requisição 30: GET Venda/DadosPagamento**
+
+**Descrição**: Dados de pagamento
+
+1. Adicione um nó **HTTP Request**
+2. Clique em **Options** (⚙️) > **Import from cURL**
+3. Cole este comando:
+
+```bash
+curl -X GET "https://clickvenda.app/Venda/DadosPagamento?_=1763750921762" \
+  -H "Accept: */*" \
+  -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
+  -H "Referer: https://clickvenda.app/Venda" \
+  -H "Sec-Fetch-Dest: empty" \
+  -H "Sec-Fetch-Mode: cors" \
+  -H "Sec-Fetch-Site: same-origin" \
+  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" \
+  -H "X-Requested-With: XMLHttpRequest" \
+  -H "sec-ch-ua: "Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"" \
+  -H "sec-ch-ua-mobile: ?0" \
+  -H "sec-ch-ua-platform: "macOS"" \
+  -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI"
+```
+
+4. **Ajuste o Cookie** (se necessário):
+   - Vá em **Parameters** (Headers)
+   - Encontre o campo **"Cookie"**
+   - No valor, substitua `SEU_SESSION_ID_AQUI` por: `ASP.NET_SessionId={{ $('Extrair Session ID').item.json.sessionId }}`
+
+5. **Ajuste o timestamp** (opcional):
+   - O parâmetro `_=` pode ser substituído por `{{ Date.now() }}` para gerar timestamp atual
 
 ---
 
@@ -169,18 +1298,9 @@ Session ID   Session ID        sessão (essencial!)
 
 3. **Use o mesmo Session ID em todas as requisições subsequentes** - `{{ $('Extrair Session ID').item.json.sessionId }}`
 
-4. **Mantenha a ordem dos nós** - Login → Extrair Session ID → Inicializar Sessão → Requisições Autenticadas
+4. **Mantenha a ordem dos nós** - A ordem exata importa! Siga a sequência do índice acima.
 
----
-
-## 🧪 Testando
-
-1. Execute o workflow
-2. Verifique que:
-   - Nó "Login" retorna `{"status":"logado"}`
-   - Nó "Extrair Session ID" mostra `sessionId` preenchido
-   - Nó "Inicializar Sessão" executa (pode retornar 302, é normal)
-   - Nó "Requisição Venda" retorna `{"success":true,"data":{...}}`
+5. **Para requisições POST com form-data**: Use `-F` no CURL. Para form-urlencoded, use `-d` (que é o padrão neste caso).
 
 ---
 
@@ -192,9 +1312,20 @@ Session ID   Session ID        sessão (essencial!)
 
 ---
 
+## 📁 Arquivos CURL Individuais
+
+Todos os CURLs individuais estão disponíveis na pasta `curls/`:
+- `curls/01-POST--Acesso-Entrar.sh` - Login
+- `curls/02-POST--Acesso-Entrar.sh` - Login (segunda tentativa)
+- ... e assim por diante
+
+Você pode copiar o conteúdo de qualquer arquivo `.sh` e colar no "Import from cURL" do N8n.
+
+---
+
 ## ❓ Se algo não funcionar
 
 - Verifique se o Session ID está sendo extraído corretamente
 - Confirme que o nó "Inicializar Sessão" está sendo executado ANTES das requisições autenticadas
 - Verifique se o Cookie está sendo enviado com o Session ID correto em todas as requisições
-
+- Confirme que a ordem das requisições está correta (seguindo o índice acima)
