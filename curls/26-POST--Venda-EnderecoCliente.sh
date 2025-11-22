@@ -7,7 +7,6 @@ curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -19,39 +18,39 @@ curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cep=66093-047" \
-  -d "logradouro=TRAVESSA+HUMAIT%C3%81" \
-  -d "numero=2240" \
-  -d "complemento=Apt+1804A" \
-  -d "bairro=MARCO" \
-  -d "cidade=BELEM" \
-  -d "uf=PA" \
-  -d "telResidencial=(91)983538941" \
-  -d "idCidadeResidencial=4565" \
-  -d "cepComercial=66093-047" \
-  -d "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
-  -d "numeroComercial=2240" \
-  -d "complementoComercial=Apt+1804A" \
-  -d "bairroComercial=MARCO" \
-  -d "cidadeComercial=BELEM" \
-  -d "ufComercial=PA" \
-  -d "telComercial=(91)983538941" \
-  -d "idCidadeComercial=4565" \
-  -d "usarCorrespondencia=R" \
-  -d "email=elton.jd.goncalves%40gmail.com" \
-  -d "email2=elton.jd.goncalves%40gmail.com" \
-  -d "aceitaSMS=true" \
-  -d "ufCelular=PA" \
-  -d "idCidadeCelular=4565" \
-  -d "cidadeCelular=BELEM" \
-  -d "celular=(91)983538941" \
-  -d "celular2=(91)983538941" \
-  -d "ufTelAdicional=PA" \
-  -d "idCidadeTelAdicional=4565" \
-  -d "cidadeTelAdicional=BELEM" \
-  -d "telAdicional=(91)983538941" \
-  -d "aderiuSeguroVidaPrestamista=true" \
-  -d "aceitaDivulgarDados=true" \
-  -d "aceitaRepresentanteGrupo=true"
+  -F "cep=66093-047" \
+  -F "logradouro=TRAVESSA+HUMAIT%C3%81" \
+  -F "numero=2240" \
+  -F "complemento=Apt+1804A" \
+  -F "bairro=MARCO" \
+  -F "cidade=BELEM" \
+  -F "uf=PA" \
+  -F "telResidencial=(91)983538941" \
+  -F "idCidadeResidencial=4565" \
+  -F "cepComercial=66093-047" \
+  -F "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
+  -F "numeroComercial=2240" \
+  -F "complementoComercial=Apt+1804A" \
+  -F "bairroComercial=MARCO" \
+  -F "cidadeComercial=BELEM" \
+  -F "ufComercial=PA" \
+  -F "telComercial=(91)983538941" \
+  -F "idCidadeComercial=4565" \
+  -F "usarCorrespondencia=R" \
+  -F "email=elton.jd.goncalves%40gmail.com" \
+  -F "email2=elton.jd.goncalves%40gmail.com" \
+  -F "aceitaSMS=true" \
+  -F "ufCelular=PA" \
+  -F "idCidadeCelular=4565" \
+  -F "cidadeCelular=BELEM" \
+  -F "celular=(91)983538941" \
+  -F "celular2=(91)983538941" \
+  -F "ufTelAdicional=PA" \
+  -F "idCidadeTelAdicional=4565" \
+  -F "cidadeTelAdicional=BELEM" \
+  -F "telAdicional=(91)983538941" \
+  -F "aderiuSeguroVidaPrestamista=true" \
+  -F "aceitaDivulgarDados=true" \
+  -F "aceitaRepresentanteGrupo=true"
 
 # IMPORTANTE: No N8n, substitua SEU_SESSION_ID_AQUI por: {{ $('Extrair Session ID').item.json.sessionId }}

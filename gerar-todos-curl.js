@@ -43,8 +43,21 @@ entries.forEach((entry, index) => {
   curl += '\n';
   curl += `curl -X ${method} "${url}"`;
   
+  // Verifica se tem postData com params para decidir se remove Content-Type
+  let hasFormDataParams = false;
+  if (req.postData && req.postData.params && req.postData.params.length > 0) {
+    const mimeType = req.postData.mimeType || '';
+    if (mimeType.includes('application/x-www-form-urlencoded')) {
+      hasFormDataParams = true;
+    }
+  }
+  
   // Headers (exceto alguns)
   const skipHeaders = ['host', 'content-length', 'connection', 'cookie'];
+  if (hasFormDataParams) {
+    skipHeaders.push('content-type'); // Remove Content-Type quando usar -F
+  }
+  
   req.headers.forEach(header => {
     const name = header.name.toLowerCase();
     if (!skipHeaders.includes(name)) {
@@ -70,12 +83,15 @@ entries.forEach((entry, index) => {
         });
       }
     } else if (mimeType.includes('application/x-www-form-urlencoded')) {
-      // Usa -d para form-urlencoded
-      if (req.postData.params) {
+      // Usa -F (form-data) para garantir que o N8n importe todos os campos corretamente
+      // O N8n consegue importar form-data perfeitamente, enquanto múltiplos -d podem falhar
+      if (req.postData.params && req.postData.params.length > 0) {
         req.postData.params.forEach(param => {
-          curl += ` \\\n  -d "${param.name}=${param.value}"`;
+          curl += ` \\\n  -F "${param.name}=${param.value}"`;
         });
+        // Remove o Content-Type do header, pois o curl define automaticamente para form-data
       } else if (req.postData.text) {
+        // Se não tiver params, usa o text direto com -d
         curl += ` \\\n  -d "${req.postData.text}"`;
       }
     } else if (req.postData.text) {

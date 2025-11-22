@@ -59,7 +59,6 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/acesso/Entrar" \
   -H "Sec-Fetch-Dest: empty" \
@@ -71,8 +70,8 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cpf=00640045200" \
-  -d "senha=disal+2026"
+  -F "cpf=00640045200" \
+  -F "senha=disal+2026"
 ```
 
 5. **Ajuste os valores de CPF e senha** no Body:
@@ -192,7 +191,6 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Acesso/Entrar" \
   -H "Sec-Fetch-Dest: empty" \
@@ -204,8 +202,8 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cpf=00640045200" \
-  -d "senha=disal+2026"
+  -F "cpf=00640045200" \
+  -F "senha=disal+2026"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -330,7 +328,6 @@ curl -X POST "https://clickvenda.app/Venda/BuscaPrazo" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -342,8 +339,8 @@ curl -X POST "https://clickvenda.app/Venda/BuscaPrazo" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "tipoFiltro=parcela" \
-  -d "idProduto=2"
+  -F "tipoFiltro=parcela" \
+  -F "idProduto=2"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -366,7 +363,6 @@ curl -X POST "https://clickvenda.app/Venda/BuscaPlano" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -378,9 +374,9 @@ curl -X POST "https://clickvenda.app/Venda/BuscaPlano" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "prazo=" \
-  -d "parcelaAte=5000" \
-  -d "idProduto=2"
+  -F "prazo=" \
+  -F "parcelaAte=5000" \
+  -F "idProduto=2"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -403,7 +399,6 @@ curl -X POST "https://clickvenda.app/Venda/BuscaMarca" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -415,8 +410,8 @@ curl -X POST "https://clickvenda.app/Venda/BuscaMarca" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "prazo=" \
-  -d "planoId=3233"
+  -F "prazo=" \
+  -F "planoId=3233"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -439,7 +434,6 @@ curl -X POST "https://clickvenda.app/Venda/BuscaBem" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -451,11 +445,11 @@ curl -X POST "https://clickvenda.app/Venda/BuscaBem" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "prazo=" \
-  -d "planoId=3233" \
-  -d "marca=" \
-  -d "creditoReferenciado=true" \
-  -d "idProduto=2"
+  -F "prazo=" \
+  -F "planoId=3233" \
+  -F "marca=" \
+  -F "creditoReferenciado=true" \
+  -F "idProduto=2"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -478,7 +472,6 @@ curl -X POST "https://clickvenda.app/Venda/BuscaAndamento" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -490,14 +483,14 @@ curl -X POST "https://clickvenda.app/Venda/BuscaAndamento" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "tipoFiltro=parcela" \
-  -d "prazo=" \
-  -d "plano=3233" \
-  -d "idMarca=" \
-  -d "idBem=1000763" \
-  -d "creditoReferenciado=true" \
-  -d "minParcela=" \
-  -d "maxParcela=5000"
+  -F "tipoFiltro=parcela" \
+  -F "prazo=" \
+  -F "plano=3233" \
+  -F "idMarca=" \
+  -F "idBem=1000763" \
+  -F "creditoReferenciado=true" \
+  -F "minParcela=" \
+  -F "maxParcela=5000"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -552,7 +545,6 @@ curl -X POST "https://clickvenda.app/Venda/SelecaoGrupo" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -564,12 +556,12 @@ curl -X POST "https://clickvenda.app/Venda/SelecaoGrupo" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "idGrupo=10196" \
-  -d "idPlano=3233" \
-  -d "prazoCota=056" \
-  -d "idTaxaPlano=9650" \
-  -d "qtdApagarContemplacao=0" \
-  -d "idProduto=2"
+  -F "idGrupo=10196" \
+  -F "idPlano=3233" \
+  -F "prazoCota=056" \
+  -F "idTaxaPlano=9650" \
+  -F "qtdApagarContemplacao=0" \
+  -F "idProduto=2"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -624,7 +616,6 @@ curl -X POST "https://clickvenda.app/Venda/SelecaoCota" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -636,8 +627,8 @@ curl -X POST "https://clickvenda.app/Venda/SelecaoCota" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cota=1421" \
-  -d "idProduto=2"
+  -F "cota=1421" \
+  -F "idProduto=2"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -695,7 +686,6 @@ curl -X POST "https://clickvenda.app/Venda/DadosBemSelecionadoAndamento" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -707,7 +697,7 @@ curl -X POST "https://clickvenda.app/Venda/DadosBemSelecionadoAndamento" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "continuar=true"
+  -F "continuar=true"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -832,7 +822,6 @@ curl -X POST "https://clickvenda.app/Venda/DadosClientePF" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -844,32 +833,32 @@ curl -X POST "https://clickvenda.app/Venda/DadosClientePF" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cpf=832.054.622-20" \
-  -d "nomeCompleto=ELTON+JHON+DIAS+GONCALVES" \
-  -d "nomeCompletoWS=ELTON+JHON+DIAS+GONCALVES" \
-  -d "dataNascimento=19%2F02%2F1986" \
-  -d "ufNaturalidade=PA" \
-  -d "naturalidade=BELEM" \
-  -d "idCidadeNaturalidade=4565" \
-  -d "idNacionalidade=BR" \
-  -d "rg=4978939" \
-  -d "orgaoExpedidor=SSP" \
-  -d "ufOrgaoExpedidor=PA" \
-  -d "dataExpedicao=08%2F08%2F2016" \
-  -d "sexo=M" \
-  -d "idEstadoCivil=6" \
-  -d "valorRendaMensal=30000" \
-  -d "idProfissao=5364" \
-  -d "nomeMae=creuza+dias+gon%C3%A7alves" \
-  -d "nomePai=eder+wilsom+machado+gon%C3%A7alves" \
-  -d "pessoaExpostaPoliticamente=false" \
-  -d "compartilhaDados=true" \
-  -d "indicadoPorCPF=" \
-  -d "indicadoPorNome=" \
-  -d "sexoConjuge=" \
-  -d "cpfConjuge=" \
-  -d "nomeConjuge=" \
-  -d "rgConjuge="
+  -F "cpf=832.054.622-20" \
+  -F "nomeCompleto=ELTON+JHON+DIAS+GONCALVES" \
+  -F "nomeCompletoWS=ELTON+JHON+DIAS+GONCALVES" \
+  -F "dataNascimento=19%2F02%2F1986" \
+  -F "ufNaturalidade=PA" \
+  -F "naturalidade=BELEM" \
+  -F "idCidadeNaturalidade=4565" \
+  -F "idNacionalidade=BR" \
+  -F "rg=4978939" \
+  -F "orgaoExpedidor=SSP" \
+  -F "ufOrgaoExpedidor=PA" \
+  -F "dataExpedicao=08%2F08%2F2016" \
+  -F "sexo=M" \
+  -F "idEstadoCivil=6" \
+  -F "valorRendaMensal=30000" \
+  -F "idProfissao=5364" \
+  -F "nomeMae=creuza+dias+gon%C3%A7alves" \
+  -F "nomePai=eder+wilsom+machado+gon%C3%A7alves" \
+  -F "pessoaExpostaPoliticamente=false" \
+  -F "compartilhaDados=true" \
+  -F "indicadoPorCPF=" \
+  -F "indicadoPorNome=" \
+  -F "sexoConjuge=" \
+  -F "cpfConjuge=" \
+  -F "nomeConjuge=" \
+  -F "rgConjuge="
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -1058,7 +1047,6 @@ curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -1070,40 +1058,40 @@ curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cep=66093-047" \
-  -d "logradouro=TRAVESSA+HUMAIT%C3%81" \
-  -d "numero=2240" \
-  -d "complemento=Apt+1804A" \
-  -d "bairro=MARCO" \
-  -d "cidade=BELEM" \
-  -d "uf=PA" \
-  -d "telResidencial=(91)983538941" \
-  -d "idCidadeResidencial=4565" \
-  -d "cepComercial=66093-047" \
-  -d "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
-  -d "numeroComercial=2240" \
-  -d "complementoComercial=Apt+1804A" \
-  -d "bairroComercial=MARCO" \
-  -d "cidadeComercial=BELEM" \
-  -d "ufComercial=PA" \
-  -d "telComercial=(91)983538941" \
-  -d "idCidadeComercial=4565" \
-  -d "usarCorrespondencia=R" \
-  -d "email=elton.jd.goncalves%40gmail.com" \
-  -d "email2=elton.jd.goncalves%40gmail.com" \
-  -d "aceitaSMS=true" \
-  -d "ufCelular=PA" \
-  -d "idCidadeCelular=4565" \
-  -d "cidadeCelular=BELEM" \
-  -d "celular=(91)983538941" \
-  -d "celular2=(91)983538941" \
-  -d "ufTelAdicional=PA" \
-  -d "idCidadeTelAdicional=4565" \
-  -d "cidadeTelAdicional=BELEM" \
-  -d "telAdicional=(91)983538941" \
-  -d "aderiuSeguroVidaPrestamista=true" \
-  -d "aceitaDivulgarDados=true" \
-  -d "aceitaRepresentanteGrupo=true"
+  -F "cep=66093-047" \
+  -F "logradouro=TRAVESSA+HUMAIT%C3%81" \
+  -F "numero=2240" \
+  -F "complemento=Apt+1804A" \
+  -F "bairro=MARCO" \
+  -F "cidade=BELEM" \
+  -F "uf=PA" \
+  -F "telResidencial=(91)983538941" \
+  -F "idCidadeResidencial=4565" \
+  -F "cepComercial=66093-047" \
+  -F "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
+  -F "numeroComercial=2240" \
+  -F "complementoComercial=Apt+1804A" \
+  -F "bairroComercial=MARCO" \
+  -F "cidadeComercial=BELEM" \
+  -F "ufComercial=PA" \
+  -F "telComercial=(91)983538941" \
+  -F "idCidadeComercial=4565" \
+  -F "usarCorrespondencia=R" \
+  -F "email=elton.jd.goncalves%40gmail.com" \
+  -F "email2=elton.jd.goncalves%40gmail.com" \
+  -F "aceitaSMS=true" \
+  -F "ufCelular=PA" \
+  -F "idCidadeCelular=4565" \
+  -F "cidadeCelular=BELEM" \
+  -F "celular=(91)983538941" \
+  -F "celular2=(91)983538941" \
+  -F "ufTelAdicional=PA" \
+  -F "idCidadeTelAdicional=4565" \
+  -F "cidadeTelAdicional=BELEM" \
+  -F "telAdicional=(91)983538941" \
+  -F "aderiuSeguroVidaPrestamista=true" \
+  -F "aceitaDivulgarDados=true" \
+  -F "aceitaRepresentanteGrupo=true"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -1126,7 +1114,6 @@ curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -1138,40 +1125,40 @@ curl -X POST "https://clickvenda.app/Venda/EnderecoCliente" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cep=66093-047" \
-  -d "logradouro=TRAVESSA+HUMAIT%C3%81" \
-  -d "numero=2240" \
-  -d "complemento=Apt+1804A" \
-  -d "bairro=MARCO" \
-  -d "cidade=BELEM" \
-  -d "uf=PA" \
-  -d "telResidencial=" \
-  -d "idCidadeResidencial=4565" \
-  -d "cepComercial=66093-047" \
-  -d "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
-  -d "numeroComercial=2240" \
-  -d "complementoComercial=Apt+1804A" \
-  -d "bairroComercial=MARCO" \
-  -d "cidadeComercial=BELEM" \
-  -d "ufComercial=PA" \
-  -d "telComercial=" \
-  -d "idCidadeComercial=4565" \
-  -d "usarCorrespondencia=R" \
-  -d "email=elton.jd.goncalves%40gmail.com" \
-  -d "email2=elton.jd.goncalves%40gmail.com" \
-  -d "aceitaSMS=true" \
-  -d "ufCelular=PA" \
-  -d "idCidadeCelular=4565" \
-  -d "cidadeCelular=BELEM" \
-  -d "celular=(91)983538941" \
-  -d "celular2=(91)983538941" \
-  -d "ufTelAdicional=PA" \
-  -d "idCidadeTelAdicional=4565" \
-  -d "cidadeTelAdicional=BELEM" \
-  -d "telAdicional=(91)983538941" \
-  -d "aderiuSeguroVidaPrestamista=true" \
-  -d "aceitaDivulgarDados=true" \
-  -d "aceitaRepresentanteGrupo=true"
+  -F "cep=66093-047" \
+  -F "logradouro=TRAVESSA+HUMAIT%C3%81" \
+  -F "numero=2240" \
+  -F "complemento=Apt+1804A" \
+  -F "bairro=MARCO" \
+  -F "cidade=BELEM" \
+  -F "uf=PA" \
+  -F "telResidencial=" \
+  -F "idCidadeResidencial=4565" \
+  -F "cepComercial=66093-047" \
+  -F "logradouroComercial=TRAVESSA+HUMAIT%C3%81" \
+  -F "numeroComercial=2240" \
+  -F "complementoComercial=Apt+1804A" \
+  -F "bairroComercial=MARCO" \
+  -F "cidadeComercial=BELEM" \
+  -F "ufComercial=PA" \
+  -F "telComercial=" \
+  -F "idCidadeComercial=4565" \
+  -F "usarCorrespondencia=R" \
+  -F "email=elton.jd.goncalves%40gmail.com" \
+  -F "email2=elton.jd.goncalves%40gmail.com" \
+  -F "aceitaSMS=true" \
+  -F "ufCelular=PA" \
+  -F "idCidadeCelular=4565" \
+  -F "cidadeCelular=BELEM" \
+  -F "celular=(91)983538941" \
+  -F "celular2=(91)983538941" \
+  -F "ufTelAdicional=PA" \
+  -F "idCidadeTelAdicional=4565" \
+  -F "cidadeTelAdicional=BELEM" \
+  -F "telAdicional=(91)983538941" \
+  -F "aderiuSeguroVidaPrestamista=true" \
+  -F "aceitaDivulgarDados=true" \
+  -F "aceitaRepresentanteGrupo=true"
 ```
 
 4. **Ajuste o Cookie** (se necessário):
@@ -1229,7 +1216,6 @@ curl -X POST "https://clickvenda.app/Venda/DadosBancarios" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -1241,11 +1227,11 @@ curl -X POST "https://clickvenda.app/Venda/DadosBancarios" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "autorizaDeposito=false" \
-  -d "naoTenhoConta=true" \
-  -d "idBancoDeposito=" \
-  -d "agenciaDeposito=" \
-  -d "contaCorrenteDeposito="
+  -F "autorizaDeposito=false" \
+  -F "naoTenhoConta=true" \
+  -F "idBancoDeposito=" \
+  -F "agenciaDeposito=" \
+  -F "contaCorrenteDeposito="
 ```
 
 4. **Ajuste o Cookie** (se necessário):

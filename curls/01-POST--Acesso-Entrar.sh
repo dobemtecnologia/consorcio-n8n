@@ -7,7 +7,6 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/acesso/Entrar" \
   -H "Sec-Fetch-Dest: empty" \
@@ -19,7 +18,7 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cpf=00640045200" \
-  -d "senha=disal+2026"
+  -F "cpf=00640045200" \
+  -F "senha=disal+2026"
 
 # IMPORTANTE: No N8n, substitua SEU_SESSION_ID_AQUI por: {{ $('Extrair Session ID').item.json.sessionId }}

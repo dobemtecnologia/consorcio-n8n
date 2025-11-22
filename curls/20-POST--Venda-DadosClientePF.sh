@@ -7,7 +7,6 @@ curl -X POST "https://clickvenda.app/Venda/DadosClientePF" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -19,31 +18,31 @@ curl -X POST "https://clickvenda.app/Venda/DadosClientePF" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "cpf=832.054.622-20" \
-  -d "nomeCompleto=ELTON+JHON+DIAS+GONCALVES" \
-  -d "nomeCompletoWS=ELTON+JHON+DIAS+GONCALVES" \
-  -d "dataNascimento=19%2F02%2F1986" \
-  -d "ufNaturalidade=PA" \
-  -d "naturalidade=BELEM" \
-  -d "idCidadeNaturalidade=4565" \
-  -d "idNacionalidade=BR" \
-  -d "rg=4978939" \
-  -d "orgaoExpedidor=SSP" \
-  -d "ufOrgaoExpedidor=PA" \
-  -d "dataExpedicao=08%2F08%2F2016" \
-  -d "sexo=M" \
-  -d "idEstadoCivil=6" \
-  -d "valorRendaMensal=30000" \
-  -d "idProfissao=5364" \
-  -d "nomeMae=creuza+dias+gon%C3%A7alves" \
-  -d "nomePai=eder+wilsom+machado+gon%C3%A7alves" \
-  -d "pessoaExpostaPoliticamente=false" \
-  -d "compartilhaDados=true" \
-  -d "indicadoPorCPF=" \
-  -d "indicadoPorNome=" \
-  -d "sexoConjuge=" \
-  -d "cpfConjuge=" \
-  -d "nomeConjuge=" \
-  -d "rgConjuge="
+  -F "cpf=832.054.622-20" \
+  -F "nomeCompleto=ELTON+JHON+DIAS+GONCALVES" \
+  -F "nomeCompletoWS=ELTON+JHON+DIAS+GONCALVES" \
+  -F "dataNascimento=19%2F02%2F1986" \
+  -F "ufNaturalidade=PA" \
+  -F "naturalidade=BELEM" \
+  -F "idCidadeNaturalidade=4565" \
+  -F "idNacionalidade=BR" \
+  -F "rg=4978939" \
+  -F "orgaoExpedidor=SSP" \
+  -F "ufOrgaoExpedidor=PA" \
+  -F "dataExpedicao=08%2F08%2F2016" \
+  -F "sexo=M" \
+  -F "idEstadoCivil=6" \
+  -F "valorRendaMensal=30000" \
+  -F "idProfissao=5364" \
+  -F "nomeMae=creuza+dias+gon%C3%A7alves" \
+  -F "nomePai=eder+wilsom+machado+gon%C3%A7alves" \
+  -F "pessoaExpostaPoliticamente=false" \
+  -F "compartilhaDados=true" \
+  -F "indicadoPorCPF=" \
+  -F "indicadoPorNome=" \
+  -F "sexoConjuge=" \
+  -F "cpfConjuge=" \
+  -F "nomeConjuge=" \
+  -F "rgConjuge="
 
 # IMPORTANTE: No N8n, substitua SEU_SESSION_ID_AQUI por: {{ $('Extrair Session ID').item.json.sessionId }}

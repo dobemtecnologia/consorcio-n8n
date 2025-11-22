@@ -7,7 +7,6 @@ curl -X POST "https://clickvenda.app/Venda/BuscaAndamento" \
   -H "Accept: */*" \
   -H "Accept-Encoding: gzip, deflate, br, zstd" \
   -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
   -H "Origin: https://clickvenda.app" \
   -H "Referer: https://clickvenda.app/Venda" \
   -H "Sec-Fetch-Dest: empty" \
@@ -19,13 +18,13 @@ curl -X POST "https://clickvenda.app/Venda/BuscaAndamento" \
   -H "sec-ch-ua-mobile: ?0" \
   -H "sec-ch-ua-platform: "macOS"" \
   -H "Cookie: ASP.NET_SessionId=SEU_SESSION_ID_AQUI" \
-  -d "tipoFiltro=parcela" \
-  -d "prazo=" \
-  -d "plano=3233" \
-  -d "idMarca=" \
-  -d "idBem=1000763" \
-  -d "creditoReferenciado=true" \
-  -d "minParcela=" \
-  -d "maxParcela=5000"
+  -F "tipoFiltro=parcela" \
+  -F "prazo=" \
+  -F "plano=3233" \
+  -F "idMarca=" \
+  -F "idBem=1000763" \
+  -F "creditoReferenciado=true" \
+  -F "minParcela=" \
+  -F "maxParcela=5000"
 
 # IMPORTANTE: No N8n, substitua SEU_SESSION_ID_AQUI por: {{ $('Extrair Session ID').item.json.sessionId }}
