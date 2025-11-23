@@ -121,9 +121,9 @@ BEGIN
         RETURN QUERY
         SELECT 
             COUNT(*)::BIGINT,
-            e.status,
+            e.status::TEXT,
             e.finished,
-            e.workflow_id
+            e.workflow_id::TEXT
         FROM 
             execution_entity e
         WHERE 
@@ -137,7 +137,7 @@ BEGIN
         RETURN QUERY
         SELECT 
             COUNT(*)::BIGINT,
-            e.status,
+            e.status::TEXT,
             e.finished,
             NULL::TEXT as workflow_id
         FROM 
