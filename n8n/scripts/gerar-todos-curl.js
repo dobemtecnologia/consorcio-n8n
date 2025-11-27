@@ -1,11 +1,17 @@
 const fs = require('fs');
+const path = require('path');
 
-const har = JSON.parse(fs.readFileSync('clickvenda.app.har', 'utf8'));
+// Caminhos relativos à raiz do projeto
+const projectRoot = path.join(__dirname, '../..');
+const harPath = path.join(projectRoot, 'n8n/data/clickvenda.app.har');
+const curlsDir = path.join(projectRoot, 'n8n/curls');
+
+const har = JSON.parse(fs.readFileSync(harPath, 'utf8'));
 const entries = har.log.entries;
 
 // Cria diretório para os CURLs
-if (!fs.existsSync('curls')) {
-  fs.mkdirSync('curls');
+if (!fs.existsSync(curlsDir)) {
+  fs.mkdirSync(curlsDir, { recursive: true });
 }
 
 console.log('Gerando CURLs de todas as requisições...\n');
@@ -26,7 +32,7 @@ entries.forEach((entry, index) => {
   
   // Nome do arquivo
   const num = String(index + 1).padStart(2, '0');
-  const fileName = `curls/${num}-${method}-${endpointName}.sh`;
+  const fileName = path.join(curlsDir, `${num}-${method}-${endpointName}.sh`);
   
   // Constrói o CURL
   let curl = '#!/bin/bash\n\n';

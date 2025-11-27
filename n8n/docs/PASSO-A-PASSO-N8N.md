@@ -91,7 +91,7 @@ curl -X POST "https://clickvenda.app/Acesso/Entrar" \
 
 1. Adicione um nó **Code** após o nó de Login
 2. Configure o modo como **"Run Once for All Items"**
-3. Cole este código JavaScript (arquivo: `extrair-session-id.js`):
+3. Cole este código JavaScript (arquivo: `n8n/workflows/extrair-session-id.js`):
 
 ```javascript
 // Code node: Mode = "Run Once for All Items"
@@ -1300,9 +1300,9 @@ curl -X GET "https://clickvenda.app/Venda/DadosPagamento?_=1763750921762" \
 
 ## 📁 Arquivos CURL Individuais
 
-Todos os CURLs individuais estão disponíveis na pasta `curls/`:
-- `curls/01-POST--Acesso-Entrar.sh` - Login
-- `curls/02-POST--Acesso-Entrar.sh` - Login (segunda tentativa)
+Todos os CURLs individuais estão disponíveis na pasta `n8n/curls/`:
+- `n8n/curls/01-POST--Acesso-Entrar.sh` - Login
+- `n8n/curls/02-POST--Acesso-Entrar.sh` - Login (segunda tentativa)
 - ... e assim por diante
 
 Você pode copiar o conteúdo de qualquer arquivo `.sh` e colar no "Import from cURL" do N8n.

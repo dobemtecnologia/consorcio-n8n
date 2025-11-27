@@ -35,14 +35,20 @@ const requisicoes = [
   { num: 30, method: 'GET', endpoint: 'Venda/DadosPagamento', descricao: 'Dados de pagamento' },
 ];
 
+// Caminhos relativos à raiz do projeto
+const projectRoot = path.join(__dirname, '../..');
+const curlsDir = path.join(projectRoot, 'n8n/curls');
+const workflowsDir = path.join(projectRoot, 'n8n/workflows');
+const docsDir = path.join(projectRoot, 'n8n/docs');
+
 // Lê todos os CURLs
 const curls = [];
-const curlFiles = fs.readdirSync('curls').filter(f => f.endsWith('.sh')).sort();
+const curlFiles = fs.readdirSync(curlsDir).filter(f => f.endsWith('.sh')).sort();
 
 curlFiles.forEach((file, index) => {
   const req = requisicoes[index];
   if (req) {
-    const fileName = `curls/${file}`;
+    const fileName = path.join(curlsDir, file);
     if (fs.existsSync(fileName)) {
       const content = fs.readFileSync(fileName, 'utf8');
       // Extrai apenas o comando curl (remove comentários iniciais e finais)
@@ -133,7 +139,7 @@ ${curls[0].curl}
 \`\`\`javascript
 `;
 
-const extrairSessionId = fs.readFileSync('extrair-session-id.js', 'utf8');
+const extrairSessionId = fs.readFileSync(path.join(workflowsDir, 'extrair-session-id.js'), 'utf8');
 guia += extrairSessionId.replace(/```/g, '');
 
 guia += `\`\`\`
@@ -240,6 +246,7 @@ Você pode copiar o conteúdo de qualquer arquivo \`.sh\` e colar no "Import fro
 `;
 
 // Salva o guia
-fs.writeFileSync('PASSO-A-PASSO-N8N.md', guia);
-console.log('✅ Guia completo gerado em PASSO-A-PASSO-N8N.md');
+const outputPath = path.join(docsDir, 'PASSO-A-PASSO-N8N.md');
+fs.writeFileSync(outputPath, guia);
+console.log(`✅ Guia completo gerado em ${outputPath}`);
 
